@@ -140,6 +140,8 @@ STATIC_INLINE uint32_t jl_int32hash_fast(uint32_t a)
 extern jl_methtable_t *jl_type_type_mt;
 JL_DLLEXPORT extern size_t jl_world_counter;
 
+extern jl_datatype_t *jl_deferredcall_type;
+
 typedef void (*tracer_cb)(jl_value_t *tracee);
 void jl_call_tracer(tracer_cb callback, jl_value_t *tracee);
 
@@ -703,6 +705,7 @@ size_t rec_backtrace_ctx_dwarf(uintptr_t *data, size_t maxsize, bt_context_t *ct
 #endif
 JL_DLLEXPORT void jl_get_backtrace(jl_array_t **bt, jl_array_t **bt2);
 JL_DLLEXPORT jl_value_t *jl_apply_with_saved_exception_state(jl_value_t **args, uint32_t nargs, int drop_exceptions);
+jl_task_t *jl_apply_in_new_task(jl_value_t **args, uint32_t nargs);
 void jl_critical_error(int sig, bt_context_t *context, uintptr_t *bt_data, size_t *bt_size);
 JL_DLLEXPORT void jl_raise_debugger(void);
 int jl_getFunctionInfo(jl_frame_t **frames, uintptr_t pointer, int skipC, int noInline);
@@ -985,7 +988,7 @@ void jl_depwarn(const char *msg, jl_value_t *sym);
 // julia side.
 void jl_log(int level, jl_module_t *module, jl_value_t *group, jl_value_t *id,
             jl_value_t *file, jl_value_t *line, jl_value_t *kwargs,
-            jl_value_t *msg);
+            int async, jl_value_t *msg);
 
 int isabspath(const char *in);
 

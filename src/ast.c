@@ -206,7 +206,7 @@ value_t fl_julia_logmsg(fl_context_t *fl_ctx, value_t *args, uint32_t nargs)
         jl_array_ptr_set((jl_array_t*)kwargs, i,
                          scm_to_julia(fl_ctx, arg_kwargs[i], NULL));
     }
-    jl_log(numval(arg_level), jl_nothing, group, id, file, line, kwargs, msg);
+    jl_log(numval(arg_level), jl_nothing, group, id, file, line, kwargs, 0, msg);
     JL_GC_POP();
     return fl_ctx->T;
 }
