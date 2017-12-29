@@ -175,9 +175,9 @@ julia> endof([1,2,4])
 3
 ```
 """
-endof(a::AbstractArray) = (@_inline_meta; rangestart(linearindices(a)))
+endof(a::AbstractArray) = (@_inline_meta; first(linearindices(a)))
 
-first(a::AbstractArray) = a[rangestop(eachindex(a))]
+first(a::AbstractArray) = a[last(eachindex(a))]
 
 """
     first(coll)
@@ -198,6 +198,7 @@ function first(itr)
     done(itr, state) && throw(ArgumentError("collection must be non-empty"))
     next(itr, state)[1]
 end
+rangestart(a) = first(a)
 
 """
     last(coll)
@@ -215,6 +216,7 @@ julia> last([1; 2; 3; 4])
 ```
 """
 last(a) = a[end]
+rangestop(a) = last(a)
 
 """
     stride(A, k::Integer)
