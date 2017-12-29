@@ -198,7 +198,6 @@ function first(itr)
     done(itr, state) && throw(ArgumentError("collection must be non-empty"))
     next(itr, state)[1]
 end
-rangestart(a) = first(a)
 
 """
     last(coll)
@@ -216,7 +215,6 @@ julia> last([1; 2; 3; 4])
 ```
 """
 last(a) = a[end]
-rangestop(a) = last(a)
 
 """
     stride(A, k::Integer)

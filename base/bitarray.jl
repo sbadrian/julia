@@ -996,9 +996,11 @@ function splice!(B::BitVector, i::Integer)
     return v
 end
 
+splice!(B::BitVector, i::Integer, ins) = splice!(B, Int(i):Int(i), ins)
+
 const _default_bit_splice = BitVector()
 
-function splice!(B::BitVector, r::Union{UnitRange{Int}, Integer}, ins::AbstractArray = _default_bit_splice)
+function splice!(B::BitVector, r::UnitRange{Int}, ins::AbstractArray = _default_bit_splice)
     n = length(B)
     i_f = rangestart(r)
     i_l = rangestop(r)
@@ -1039,7 +1041,7 @@ function splice!(B::BitVector, r::Union{UnitRange{Int}, Integer}, ins::AbstractA
     return v
 end
 
-function splice!(B::BitVector, r::Union{UnitRange{Int}, Integer}, ins)
+function splice!(B::BitVector, r::UnitRange{Int}, ins)
     Bins = BitVector(uninitialized, length(ins))
     i = 1
     for x in ins
