@@ -430,6 +430,24 @@ let smallint = (Int === Int64 ?
     length(r::OneTo{<:smallint}) = Int(r.stop)
 end
 
+rangestart(r::OrdinalRange{T}) where {T} = convert(T, r.start)
+rangestart(r::OneTo{T}) where {T} = oneunit(T)
+rangestart(r::StepRangeLen) = unsafe_getindex(r, 1)
+rangestart(r::LinSpace) = r.start
+
+rangestop(r::OrdinalRange{T}) where {T} = convert(T, r.stop)
+rangestop(r::StepRangeLen) = unsafe_getindex(r, length(r))
+rangestop(r::LinSpace) = r.stop
+
+first(r::OrdinalRange{T}) where {T} = convert(T, r.start)
+first(r::OneTo{T}) where {T} = oneunit(T)
+first(r::StepRangeLen) = unsafe_getindex(r, 1)
+first(r::LinSpace) = r.start
+
+last(r::OrdinalRange{T}) where {T} = convert(T, r.stop)
+last(r::StepRangeLen) = unsafe_getindex(r, length(r))
+last(r::LinSpace) = r.stop
+
 minimum(r::AbstractUnitRange) = isempty(r) ? throw(ArgumentError("range must be non-empty")) : first(r)
 maximum(r::AbstractUnitRange) = isempty(r) ? throw(ArgumentError("range must be non-empty")) : last(r)
 minimum(r::AbstractRange)  = isempty(r) ? throw(ArgumentError("range must be non-empty")) : min(first(r), last(r))

@@ -189,10 +189,10 @@ function print_matrix(io::IO, X::AbstractVecOrMat,
     if m <= screenheight # rows fit vertically on screen
         if n <= length(A) # rows and cols fit so just print whole matrix in one piece
             for i in rowsA
-                print(io, i == first(rowsA) ? pre : presp)
+                print(io, i == rangestart(rowsA) ? pre : presp)
                 print_matrix_row(io, X,A,i,colsA,sep)
-                print(io, i == last(rowsA) ? post : postsp)
-                if i != last(rowsA); println(io); end
+                print(io, i == rangestop(rowsA) ? post : postsp)
+                if i != rangestop(rowsA); println(io); end
             end
         else # rows fit down screen but cols don't, so need horizontal ellipsis
             c = div(screenwidth-length(hdots)+1,2)+1  # what goes to right of ellipsis
@@ -200,25 +200,25 @@ function print_matrix(io::IO, X::AbstractVecOrMat,
             c = screenwidth - sum(map(sum,Ralign)) - (length(Ralign)-1)*sepsize - length(hdots)
             Lalign = alignment(io, X, rowsA, colsA, c, c, sepsize) # alignments for left of ellipsis
             for i in rowsA
-                print(io, i == first(rowsA) ? pre : presp)
+                print(io, i == rangestart(rowsA) ? pre : presp)
                 print_matrix_row(io, X,Lalign,i,colsA[1:length(Lalign)],sep)
-                print(io, (i - first(rowsA)) % hmod == 0 ? hdots : repeat(" ", length(hdots)))
+                print(io, (i - rangestart(rowsA)) % hmod == 0 ? hdots : repeat(" ", length(hdots)))
                 print_matrix_row(io, X, Ralign, i, (n - length(Ralign)) .+ colsA, sep)
-                print(io, i == last(rowsA) ? post : postsp)
-                if i != last(rowsA); println(io); end
+                print(io, i == rangestop(rowsA) ? post : postsp)
+                if i != rangestop(rowsA); println(io); end
             end
         end
     else # rows don't fit so will need vertical ellipsis
         if n <= length(A) # rows don't fit, cols do, so only vertical ellipsis
             for i in rowsA
-                print(io, i == first(rowsA) ? pre : presp)
+                print(io, i == rangestart(rowsA) ? pre : presp)
                 print_matrix_row(io, X,A,i,colsA,sep)
-                print(io, i == last(rowsA) ? post : postsp)
+                print(io, i == rangestop(rowsA) ? post : postsp)
                 if i != rowsA[end] || i == rowsA[halfheight]; println(io); end
                 if i == rowsA[halfheight]
-                    print(io, i == first(rowsA) ? pre : presp)
+                    print(io, i == rangestart(rowsA) ? pre : presp)
                     print_matrix_vdots(io, vdots,A,sep,vmod,1)
-                    print(io, i == last(rowsA) ? post : postsp * '\n')
+                    print(io, i == rangestop(rowsA) ? post : postsp * '\n')
                 end
             end
         else # neither rows nor cols fit, so use all 3 kinds of dots
@@ -232,14 +232,14 @@ function print_matrix(io::IO, X::AbstractVecOrMat,
                 print_matrix_row(io, X,Lalign,i,colsA[1:length(Lalign)],sep)
                 print(io, (i - first(rowsA)) % hmod == 0 ? hdots : repeat(" ", length(hdots)))
                 print_matrix_row(io, X,Ralign,i,(n-length(Ralign)).+colsA,sep)
-                print(io, i == last(rowsA) ? post : postsp)
+                print(io, i == rangestop(rowsA) ? post : postsp)
                 if i != rowsA[end] || i == rowsA[halfheight]; println(io); end
                 if i == rowsA[halfheight]
                     print(io, i == first(rowsA) ? pre : presp)
                     print_matrix_vdots(io, vdots,Lalign,sep,vmod,1)
                     print(io, ddots)
                     print_matrix_vdots(io, vdots,Ralign,sep,vmod,r)
-                    print(io, i == last(rowsA) ? post : postsp * '\n')
+                    print(io, i == rangestop(rowsA) ? post : postsp * '\n')
                 end
             end
         end
@@ -268,11 +268,11 @@ function show_nd(io::IO, a::AbstractArray, print_matrix::Function, label_slices:
                 ii = idxs[i]
                 ind = tailinds[i]
                 if length(ind) > 10
-                    if ii == ind[4] && all(d->idxs[d]==first(tailinds[d]),1:i-1)
+                    if ii == ind[4] && all(d->idxs[d]==rangestart(tailinds[d]),1:i-1)
                         for j=i+1:nd
                             szj = length(axes(a, j+2))
                             indj = tailinds[j]
-                            if szj>10 && first(indj)+2 < idxs[j] <= last(indj)-3
+                            if szj>10 && rangestart(indj)+2 < idxs[j] <= rangestop(indj)-3
                                 @goto skip
                             end
                         end
@@ -293,7 +293,7 @@ function show_nd(io::IO, a::AbstractArray, print_matrix::Function, label_slices:
         end
         slice = view(a, axes(a,1), axes(a,2), idxs...)
         print_matrix(io, slice)
-        print(io, idxs == map(last,tailinds) ? "" : "\n\n")
+        print(io, idxs == map(rangestop,tailinds) ? "" : "\n\n")
         @label skip
     end
 end
@@ -388,14 +388,14 @@ function _show_nonempty(io::IO, X::AbstractMatrix, prefix::String)
                         show(io, el)
                     end
                 end
-                if last(cr) == last(indc)
-                    i < last(indr) && print(io, "; ")
+                if rangestop(cr) == rangestop(indc)
+                    i < rangestop(indr) && print(io, "; ")
                 elseif cdots
                     print(io, " \u2026 ")
                 end
             end
         end
-        last(rr) != nr && rdots && print(io, "\u2026 ; ")
+        rangestop(rr) != nr && rdots && print(io, "\u2026 ; ")
     end
     print(io, "]")
 end

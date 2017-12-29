@@ -927,8 +927,8 @@ end
 
 function deleteat!(B::BitVector, r::UnitRange{Int})
     n = length(B)
-    i_f = first(r)
-    i_l = last(r)
+    i_f = rangestart(r)
+    i_l = rangestop(r)
     1 <= i_f || throw(BoundsError(B, i_f))
     i_l <= n || throw(BoundsError(B, n+1))
 
@@ -1000,8 +1000,8 @@ const _default_bit_splice = BitVector()
 
 function splice!(B::BitVector, r::Union{UnitRange{Int}, Integer}, ins::AbstractArray = _default_bit_splice)
     n = length(B)
-    i_f = first(r)
-    i_l = last(r)
+    i_f = rangestart(r)
+    i_l = rangestop(r)
 
     1 <= i_f <= n+1 || throw(BoundsError(B, i_f))
     i_l <= n || throw(BoundsError(B, n+1))

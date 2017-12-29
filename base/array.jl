@@ -1284,7 +1284,7 @@ function splice!(a::Vector, r::UnitRange{<:Integer}, ins=_default_splice)
 
     n = length(a)
     f = first(r)
-    l = last(r)
+    l = rangestop(r)
     d = length(r)
 
     if m < d
@@ -1367,22 +1367,24 @@ julia> reverse(A, 3, 5)
  3
 ```
 """
-function reverse(A::AbstractVector, s=first(linearindices(A)), n=last(linearindices(A)))
+function reverse(A::AbstractVector,
+                 s=rangestart(linearindices(A)),
+                 n=rangestop(linearindices(A)))
     B = similar(A)
-    for i = first(linearindices(A)):s-1
+    for i = rangestart(linearindices(A)):s-1
         B[i] = A[i]
     end
     for i = s:n
         B[i] = A[n+s-i]
     end
-    for i = n+1:last(linearindices(A))
+    for i = n+1:rangestop(linearindices(A))
         B[i] = A[i]
     end
     return B
 end
 function reverseind(a::AbstractVector, i::Integer)
     li = linearindices(a)
-    first(li) + last(li) - i
+    rangestart(li) + rangestop(li) - i
 end
 
 """
@@ -1411,12 +1413,14 @@ julia> A
  1
 ```
 """
-function reverse!(v::AbstractVector, s=first(linearindices(v)), n=last(linearindices(v)))
+function reverse!(v::AbstractVector,
+                  s=rangestart(linearindices(v)),
+                  n=rangestop(linearindices(v)))
     liv = linearindices(v)
     if n <= s  # empty case; ok
-    elseif !(first(liv) ≤ s ≤ last(liv))
+    elseif !(rangestart(liv) ≤ s ≤ rangestop(liv))
         throw(BoundsError(v, s))
-    elseif !(first(liv) ≤ n ≤ last(liv))
+    elseif !(rangestart(liv) ≤ n ≤ rangestop(liv))
         throw(BoundsError(v, n))
     end
     r = n
@@ -2209,7 +2213,7 @@ function filter!(f, a::AbstractVector)
         end
     end
 
-    deleteat!(a, i:last(idx))
+    deleteat!(a, i:rangestop(idx))
 
     return a
 end
