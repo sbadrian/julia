@@ -240,6 +240,8 @@ unsafe_indices(S::Slice) = (S.indices,)
 indices1(S::Slice) = S.indices
 first(S::Slice) = first(S.indices)
 last(S::Slice) = last(S.indices)
+rangestart(S::Slice) = rangestart(S.indices)
+rangestop(S::Slice) = rangestop(S.indices)
 errmsg(A) = error("size not supported for arrays with indices $(axes(A)); see https://docs.julialang.org/en/latest/devdocs/offset-arrays/")
 size(S::Slice) = first(S.indices) == 1 ? (length(S.indices),) : errmsg(S)
 length(S::Slice) = first(S.indices) == 1 ? length(S.indices) : errmsg(S)

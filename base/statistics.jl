@@ -599,7 +599,7 @@ function median!(v::AbstractVector)
     end
     inds = axes(v, 1)
     n = length(inds)
-    mid = div(first(inds)+last(inds),2)
+    mid = div(rangestart(inds)+rangestop(inds),2)
     if isodd(n)
         return middle(partialsort!(v,mid))
     else
