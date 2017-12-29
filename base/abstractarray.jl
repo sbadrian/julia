@@ -175,9 +175,9 @@ julia> endof([1,2,4])
 3
 ```
 """
-endof(a::AbstractArray) = (@_inline_meta; first(linearindices(a)))
+endof(a::AbstractArray) = (@_inline_meta; rangestop(linearindices(a)))
 
-first(a::AbstractArray) = a[last(eachindex(a))]
+first(a::AbstractArray) = a[rangestart(eachindex(a))]
 
 """
     first(coll)
