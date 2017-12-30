@@ -327,7 +327,7 @@ module IteratorsMD
 
     simd_index(iter::CartesianIndices{0}, ::CartesianIndex, I1::Int) = rangestart(iter)
     @inline function simd_index(iter::CartesianIndices, Ilast::CartesianIndex, I1::Int)
-        CartesianIndex((I1+first(iter.indices[1]), Ilast.I...))
+        CartesianIndex((I1+rangestart(iter.indices[1]), Ilast.I...))
     end
 
     # Split out the first N elements of a tuple
@@ -743,7 +743,7 @@ function accumulate_pairwise!(op::Op, result::AbstractVector, v::AbstractVector)
     li != linearindices(result) && throw(DimensionMismatch("input and output array sizes and indices must match"))
     n = length(li)
     n == 0 && return result
-    i1 = first(li)
+    i1 = rangestart(li)
     @inbounds result[i1] = v1 = v[i1]
     n == 1 && return result
     _accumulate_pairwise!(op, result, v, v1, i1+1, n-1)
@@ -1046,7 +1046,7 @@ end
 
 @noinline function _accumulate!(op, B, A, R1, ind, R2)
     # Copy the initial element in each 1d vector along dimension `dim`
-    ii = first(ind)
+    ii = rangestart(ind)
     @inbounds for J in R2, I in R1
         B[I, ii, J] = A[I, ii, J]
     end
@@ -1309,7 +1309,7 @@ function circcopy!(dest, src)
     if (szsrc = map(length, indssrc)) != (szdest = map(length, indsdest))
         throw(DimensionMismatch("src and dest must have the same sizes (got $szsrc and $szdest)"))
     end
-    shift = map((isrc, idest)->first(isrc)-first(idest), indssrc, indsdest)
+    shift = map((isrc, idest)->rangestart(isrc)-rangestart(idest), indssrc, indsdest)
     all(x->x==0, shift) && return copyto!(dest, src)
     _circcopy!(dest, (), indsdest, src, (), indssrc)
 end

@@ -96,7 +96,8 @@ is specified as string sep.
 function print_matrix_row(io::IO,
         X::AbstractVecOrMat, A::Vector,
         i::Integer, cols::AbstractVector, sep::AbstractString)
-    isempty(A) || first(axes(cols,1)) == 1 || throw(DimensionMismatch("indices of cols ($(axes(cols,1))) must start at 1"))
+    isempty(A) || rangestart(axes(cols,1)) == 1 ||
+        throw(DimensionMismatch("indices of cols ($(axes(cols,1))) must start at 1"))
     for k = 1:length(A)
         j = cols[k]
         if isassigned(X,Int(i),Int(j)) # isassigned accepts only `Int` indices
@@ -228,14 +229,14 @@ function print_matrix(io::IO, X::AbstractVecOrMat,
             Lalign = alignment(io, X, rowsA, colsA, c, c, sepsize)
             r = mod((length(Ralign)-n+1),vmod) # where to put dots on right half
             for i in rowsA
-                print(io, i == first(rowsA) ? pre : presp)
+                print(io, i == rangestart(rowsA) ? pre : presp)
                 print_matrix_row(io, X,Lalign,i,colsA[1:length(Lalign)],sep)
-                print(io, (i - first(rowsA)) % hmod == 0 ? hdots : repeat(" ", length(hdots)))
+                print(io, (i - rangestart(rowsA)) % hmod == 0 ? hdots : repeat(" ", length(hdots)))
                 print_matrix_row(io, X,Ralign,i,(n-length(Ralign)).+colsA,sep)
                 print(io, i == rangestop(rowsA) ? post : postsp)
                 if i != rowsA[end] || i == rowsA[halfheight]; println(io); end
                 if i == rowsA[halfheight]
-                    print(io, i == first(rowsA) ? pre : presp)
+                    print(io, i == rangestart(rowsA) ? pre : presp)
                     print_matrix_vdots(io, vdots,Lalign,sep,vmod,1)
                     print(io, ddots)
                     print_matrix_vdots(io, vdots,Ralign,sep,vmod,r)
@@ -380,7 +381,7 @@ function _show_nonempty(io::IO, X::AbstractMatrix, prefix::String)
         for i in rr
             for cr in (cr1, cr2)
                 for j in cr
-                    j > first(cr) && print(io, " ")
+                    j > rangestart(cr) && print(io, " ")
                     if !isassigned(X,i,j)
                         print(io, undef_ref_str)
                     else

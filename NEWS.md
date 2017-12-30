@@ -230,7 +230,7 @@ This section lists changes that do not have deprecation warnings.
 
   * The representation of `CartesianRange` has changed to a
     tuple-of-AbstractUnitRanges; the `start` and `stop` fields are no
-    longer present. Use `first(R)` and `last(R)` to obtain
+    longer present. Use `rangestart(R)` and `rangestop(R)` to obtain
     start/stop. ([#20974])
 
   * The `Diagonal`, `Bidiagonal`, `Tridiagonal` and `SymTridiagonal` type definitions have

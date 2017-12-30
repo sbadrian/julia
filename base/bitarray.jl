@@ -644,7 +644,7 @@ end
     return B
 end
 
-indexoffset(i) = first(i)-1
+indexoffset(i) = rangestart(i)-1
 indexoffset(::Colon) = 0
 
 @inline function setindex!(B::BitArray, x, J0::Union{Colon,UnitRange{Int}})

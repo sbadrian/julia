@@ -1027,7 +1027,7 @@ end
 function getindex(r::Use_StepRangeLen_Instead, s::OrdinalRange)
     @_inline_meta
     @boundscheck checkbounds(r, s)
-    Use_StepRangeLen_Instead(r.start + (first(s)-1)*r.step, step(s)*r.step, length(s), r.divisor)
+    Use_StepRangeLen_Instead(r.start + (rangestart(s)-1)*r.step, step(s)*r.step, length(s), r.divisor)
 end
 
 -(r::Use_StepRangeLen_Instead)   = Use_StepRangeLen_Instead(-r.start, -r.step, r.len, r.divisor)
@@ -1046,14 +1046,14 @@ convert(::Type{Use_StepRangeLen_Instead{T}}, r::Use_StepRangeLen_Instead) where 
 promote_rule(::Type{Use_StepRangeLen_Instead{F}}, ::Type{OR}) where {F,OR<:OrdinalRange} =
     Use_StepRangeLen_Instead{promote_type(F,eltype(OR))}
 convert(::Type{Use_StepRangeLen_Instead{T}}, r::OrdinalRange) where {T<:AbstractFloat} =
-    Use_StepRangeLen_Instead{T}(first(r), step(r), length(r), one(T))
+    Use_StepRangeLen_Instead{T}(rangestart(r), step(r), length(r), one(T))
 convert(::Type{Use_StepRangeLen_Instead}, r::OrdinalRange{T}) where {T} =
-    Use_StepRangeLen_Instead{typeof(float(first(r)))}(first(r), step(r), length(r), one(T))
+    Use_StepRangeLen_Instead{typeof(float(rangestart(r)))}(rangestart(r), step(r), length(r), one(T))
 
 promote_rule(::Type{LinSpace{F}}, ::Type{OR}) where {F,OR<:Use_StepRangeLen_Instead} =
     LinSpace{promote_type(F,eltype(OR))}
 convert(::Type{LinSpace{T}}, r::Use_StepRangeLen_Instead) where {T<:AbstractFloat} =
-    linspace(convert(T, first(r)), convert(T, last(r)), convert(T, length(r)))
+    linspace(convert(T, rangestart(r)), convert(T, last(r)), convert(T, length(r)))
 convert(::Type{LinSpace}, r::Use_StepRangeLen_Instead{T}) where {T<:AbstractFloat} =
     convert(LinSpace{T}, r)
 

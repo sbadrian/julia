@@ -108,10 +108,10 @@ const sorted_keywords = [
 
 function complete_keyword(s::Union{String,SubString{String}})
     r = searchsorted(sorted_keywords, s)
-    i = first(r)
+    i = rangestart(r)
     n = length(sorted_keywords)
     while i <= n && startswith(sorted_keywords[i],s)
-        r = first(r):i
+        r = rangestart(r):i
         i += 1
     end
     sorted_keywords[r]

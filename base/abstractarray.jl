@@ -741,9 +741,9 @@ function copyto!(B::AbstractVecOrMat{R}, ir_dest::AbstractRange{Int}, jr_dest::A
     end
     @boundscheck checkbounds(B, ir_dest, jr_dest)
     @boundscheck checkbounds(A, ir_src, jr_src)
-    jdest = first(jr_dest)
+    jdest = rangestart(jr_dest)
     for jsrc in jr_src
-        idest = first(ir_dest)
+        idest = rangestart(ir_dest)
         for isrc in ir_src
             B[idest,jdest] = A[isrc,jsrc]
             idest += step(ir_dest)
@@ -890,7 +890,7 @@ end
 pointer(x::AbstractArray{T}) where {T} = unsafe_convert(Ptr{T}, x)
 function pointer(x::AbstractArray{T}, i::Integer) where T
     @_inline_meta
-    unsafe_convert(Ptr{T}, x) + (i - first(linearindices(x)))*elsize(x)
+    unsafe_convert(Ptr{T}, x) + (i - rangestart(linearindices(x)))*elsize(x)
 end
 
 ## Approach:
@@ -1057,7 +1057,7 @@ function get!(X::AbstractVector{T}, A::AbstractVector, I::Union{AbstractRange,Ab
     ind = findin(I, indices1(A))
     X[ind] = A[I[ind]]
     Xind = indices1(X)
-    X[first(Xind):first(ind)-1] = default
+    X[rangestart(Xind):first(ind)-1] = default
     X[last(ind)+1:last(Xind)] = default
     X
 end
@@ -1621,7 +1621,7 @@ end
 nextL(L, l::Integer) = L*l
 nextL(L, r::AbstractUnitRange) = L*unsafe_length(r)
 offsetin(i, l::Integer) = i-1
-offsetin(i, r::AbstractUnitRange) = i-first(r)
+offsetin(i, r::AbstractUnitRange) = i-rangestart(r)
 
 _ind2sub(::Tuple{}, ind::Integer) = (@_inline_meta; ind == 1 ? () : throw(BoundsError()))
 _ind2sub(dims::DimsInteger, ind::Integer) = (@_inline_meta; _ind2sub_recurse(dims, ind-1))
@@ -1643,9 +1643,9 @@ function _ind2sub_recurse(inds, ind)
 end
 
 _lookup(ind, d::Integer) = ind+1
-_lookup(ind, r::AbstractUnitRange) = ind+first(r)
+_lookup(ind, r::AbstractUnitRange) = ind+rangestart(r)
 _div(ind, d::Integer) = div(ind, d), 1, d
-_div(ind, r::AbstractUnitRange) = (d = unsafe_length(r); (div(ind, d), first(r), d))
+_div(ind, r::AbstractUnitRange) = (d = unsafe_length(r); (div(ind, d), rangestart(r), d))
 
 # Vectorized forms
 function _sub2ind(inds::Indices{1}, I1::AbstractVector{T}, I::AbstractVector{T}...) where T<:Integer
@@ -1776,7 +1776,7 @@ function mapslices(f, A::AbstractArray, dims::AbstractVector)
 
     otherdims = setdiff(alldims, dims)
 
-    idx = Any[first(ind) for ind in axes(A)]
+    idx = Any[rangestart(ind) for ind in axes(A)]
     itershape   = tuple(dimsA[otherdims]...)
     for d in dims
         idx[d] = Slice(axes(A, d))
@@ -1947,7 +1947,7 @@ function hash_range(r::AbstractRange, h::UInt)
     h += hash(size(r))
 
     length(r) == 0 && return h
-    h = hash(first(r), h)
+    h = hash(rangestart(r), h)
     length(r) == 1 && return h
     length(r) == 2 && return hash(rangestop(r), h)
 
@@ -2006,7 +2006,7 @@ function hash(a::AbstractArray{T}, h::UInt) where T
             x2, state = next(a, state)
         end
 
-        h = hash(first(a), h)
+        h = hash(rangestart(a), h)
         h += hashr_seed
         # Always hash at least the two first elements as a range (even in case of overflow)
         if n < 2

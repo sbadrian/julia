@@ -292,7 +292,7 @@ function _split(str::AbstractString, splitter, limit::Integer, keep_empty::Bool,
     n = endof(str)
     r = search(str,splitter,i)
     if r != 0:-1
-        j, k = first(r), nextind(str,rangestop(r))
+        j, k = rangestart(r), nextind(str,rangestop(r))
         while 0 < j <= n && length(strs) != limit-1
             if i < k
                 if keep_empty || i < j
@@ -303,7 +303,7 @@ function _split(str::AbstractString, splitter, limit::Integer, keep_empty::Bool,
             (k <= j) && (k = nextind(str,j))
             r = search(str,splitter,k)
             r == 0:-1 && break
-            j, k = first(r), nextind(str,rangestop(r))
+            j, k = rangestart(r), nextind(str,rangestop(r))
         end
     end
     if keep_empty || !done(str,i)
@@ -490,8 +490,8 @@ function hex2bytes!(d::AbstractVector{UInt8}, s::AbstractVector{UInt8})
         isodd(length(s)) && throw(ArgumentError("input hex array must have even length"))
         throw(ArgumentError("output array must be half length of input array"))
     end
-    j = first(eachindex(d)) - 1
-    for i = first(eachindex(s)):2:endof(s)
+    j = rangestart(eachindex(d)) - 1
+    for i = rangestart(eachindex(s)):2:endof(s)
         @inbounds d[j += 1] = number_from_hex(s[i]) << 4 + number_from_hex(s[i+1])
     end
     return d
