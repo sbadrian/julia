@@ -430,7 +430,6 @@ let smallint = (Int === Int64 ?
     length(r::OneTo{<:smallint}) = Int(r.stop)
 end
 
-
 rangestart(r::OrdinalRange{T}) where {T} = convert(T, r.start)
 rangestart(r::OneTo{T}) where {T} = oneunit(T)
 rangestart(r::StepRangeLen) = unsafe_getindex(r, 1)
@@ -718,7 +717,7 @@ end
 
 # findin (the index of intersection)
 function _findin(r::AbstractRange{<:Integer}, span::AbstractUnitRange{<:Integer})
-    local irangestart
+    local ifirst
     local ilast
     fspan = rangestart(span)
     lspan = rangestop(span)
@@ -726,10 +725,10 @@ function _findin(r::AbstractRange{<:Integer}, span::AbstractUnitRange{<:Integer}
     lr = rangestop(r)
     sr = step(r)
     if sr > 0
-        irangestart = fr >= fspan ? 1 : ceil(Integer,(fspan-fr)/sr)+1
+        ifirst = fr >= fspan ? 1 : ceil(Integer,(fspan-fr)/sr)+1
         ilast = lr <= lspan ? length(r) : length(r) - ceil(Integer,(lr-lspan)/sr)
     elseif sr < 0
-        irangestart = fr <= lspan ? 1 : ceil(Integer,(lspan-fr)/sr)+1
+        ifirst = fr <= lspan ? 1 : ceil(Integer,(lspan-fr)/sr)+1
         ilast = lr >= fspan ? length(r) : length(r) - ceil(Integer,(lr-fspan)/sr)
     else
         ifirst = fr >= fspan ? 1 : length(r)+1

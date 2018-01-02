@@ -3733,6 +3733,21 @@ end
     @deprecate getq(F::Factorization) F.Q
 end
 
+function first(r::AbstractRange)
+    if isempty(r)
+        depwarn("calling `first` on an empty range will throw an error in the future, use `rangestart` instead",
+                :first)
+    end
+    rangestart(r)
+end
+function last(r::AbstractRange)
+    if isempty(r)
+        depwarn("calling `last` on an empty range will throw an error in the future, use `rangestop` instead",
+                :first)
+    end
+    rangestop(r)
+end
+
 # END 0.7 deprecations
 
 # BEGIN 1.0 deprecations

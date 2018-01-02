@@ -895,6 +895,10 @@ Deprecated or removed
     in favor of dot overloading (`getproperty`) so factors should now be accessed as e.g.
     `F.Q` instead of `F[:Q]` ([#25184]).
 
+  * Calling `first` and `last` on empty ranges has been deprecated in favor of `rangestart`
+    and `rangestop` (respectively). An error will be thrown in the future, for consistency
+    with other `AbstractArray` types.
+
 Command-line option changes
 ---------------------------
 

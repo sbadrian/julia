@@ -291,6 +291,8 @@ function _split(str::AbstractString, splitter, limit::Integer, keep_empty::Bool,
     i = start(str)
     n = endof(str)
     r = search(str,splitter,i)
+    # FIXME remove this after #24673 is merged
+    r isa Integer && (r = r:r)
     if r != 0:-1
         j, k = rangestart(r), nextind(str,rangestop(r))
         while 0 < j <= n && length(strs) != limit-1
@@ -303,6 +305,8 @@ function _split(str::AbstractString, splitter, limit::Integer, keep_empty::Bool,
             (k <= j) && (k = nextind(str,j))
             r = search(str,splitter,k)
             r == 0:-1 && break
+            # FIXME remove this after #24673 is merged
+            r isa Integer && (r = r:r)
             j, k = rangestart(r), nextind(str,rangestop(r))
         end
     end
