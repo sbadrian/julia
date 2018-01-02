@@ -514,7 +514,7 @@ function getindex(x::SparseMatrixCSC, I::AbstractUnitRange, j::Integer)
     c2 = convert(Int, x.colptr[j+1]) - 1
     # Restrict to the selected rows
     r1 = searchsortedfirst(x.rowval, rangestart(I), c1, c2, Forward)
-    r2 = searchsortedlast(x.rowval, last(I), c1, c2, Forward)
+    r2 = searchsortedlast(x.rowval, rangestop(I), c1, c2, Forward)
     SparseVector(length(I), [x.rowval[i] - rangestart(I) + 1 for i = r1:r2], x.nzval[r1:r2])
 end
 

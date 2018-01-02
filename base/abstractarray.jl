@@ -701,7 +701,7 @@ function copyto!(::IndexStyle, dest::AbstractArray, ::IndexCartesian, src::Abstr
 end
 
 function copyto!(dest::AbstractArray, dstart::Integer, src::AbstractArray)
-    copyto!(dest, dstart, src, first(linearindices(src)), _length(src))
+    copyto!(dest, dstart, src, rangestart(linearindices(src)), _length(src))
 end
 
 function copyto!(dest::AbstractArray, dstart::Integer, src::AbstractArray, sstart::Integer)
@@ -2006,7 +2006,7 @@ function hash(a::AbstractArray{T}, h::UInt) where T
             x2, state = next(a, state)
         end
 
-        h = hash(rangestart(a), h)
+        h = hash(first(a), h)
         h += hashr_seed
         # Always hash at least the two first elements as a range (even in case of overflow)
         if n < 2

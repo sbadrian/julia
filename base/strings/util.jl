@@ -385,7 +385,11 @@ function replace(str::String, pat_repl::Pair; count::Integer=typemax(Int))
     e = endof(str)
     i = a = start(str)
     r = search(str,pattern,i)
-    j, k = rangestart(r), rangestop(r)
+    if r isa Integer
+        j = k = r
+    else
+        j, k = rangestart(r), rangestop(r)
+    end
     out = IOBuffer(StringVector(floor(Int, 1.2sizeof(str))), true, true)
     out.size = 0
     out.ptr = 1

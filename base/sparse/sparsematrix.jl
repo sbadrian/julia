@@ -1522,7 +1522,7 @@ function ==(A1::SparseMatrixCSC, A2::SparseMatrixCSC)
         nz1,nz2 = nzrange(A1,i), nzrange(A2,i)
         j1,j2 = rangestart(nz1), rangestart(nz2)
         # step through the rows of both matrices at once:
-        while j1 <= last(nz1) && j2 <= last(nz2)
+        while j1 <= rangestop(nz1) && j2 <= rangestop(nz2)
             r1,r2 = rows1[j1], rows2[j2]
             if r1==r2
                 vals1[j1]!=vals2[j2] && return false
@@ -1539,10 +1539,10 @@ function ==(A1::SparseMatrixCSC, A2::SparseMatrixCSC)
             end
         end
         # finish off any left-overs:
-        for j = j1:last(nz1)
+        for j = j1:rangestop(nz1)
             vals1[j]!=0 && return false
         end
-        for j = j2:last(nz2)
+        for j = j2:rangestop(nz2)
             vals2[j]!=0 && return false
         end
     end
